@@ -152,13 +152,13 @@ class TestRunnerArgumentParser(argparse.ArgumentParser):
                           metavar = '<LLVM|GCC>',
                           dest = 'toolchain',
                           type = str,
-                          default = "LLVM",
+                          default = "GCC",
                           help = 'Pick compiler toolchain\n')
         self.add_argument('--toolchain_install_dir',
                           metavar = '<dir>',
                           dest = 'toolchain_install_dir',
                           type = str,
-                          default = os.environ.get('LLVM_INSTALL_DIR'),
+                          default = os.environ.get('GCC_INSTALL_DIR'),
                           help = 'Pick compiler install dir\n')
         self.add_argument('--input-type-map',
                           nargs = '*',
@@ -305,8 +305,8 @@ class TestRunner():
         self.gen_args = gen_args
 
         self._dir_gen_root = f'TEST_{platform.upper()}'
-        assert self._args.toolchain_install_dir is not None, f"Environment variable LLVM_INSTALL_DIR is not set"
-        self._dir_toolchain = os.path.normpath(self._args.toolchain_install_dir)
+        # assert self._args.toolchain_install_dir is not None, f"Environment variable LLVM_INSTALL_DIR is not set"
+        # self._dir_toolchain ="/usr/bin/gcc"
         self._dir_build = f"{self._dir_gen_root}/build"
         self._dir_gen, self._dir_test, self._name_test = getPaths(self._args.dir, self._dir_gen_root)
 
@@ -367,8 +367,8 @@ class TestRunner():
         else:
             self.cmake_args += " -D gvsoc_simulation=OFF"
 
-        command = f"$CMAKE -D TOOLCHAIN={self._args.toolchain} -D TOOLCHAIN_INSTALL_DIR={self._dir_toolchain} -D GENERATED_SOURCE={self._dir_gen} -D platform={self._platform} {self.cmake_args} -B {self._dir_build} -D TESTNAME={self._name_test} .."
-
+        command = f"$CMAKE -D TOOLCHAIN={self._args.toolchain} -D GENERATED_SOURCE={self._dir_gen} -D platform={self._platform} {self.cmake_args} -B {self._dir_build} -D TESTNAME={self._name_test} .."
+        print("command:", command)
         if self._args.verbose >= 3:
             command = "VERBOSE=1 " + command
 
